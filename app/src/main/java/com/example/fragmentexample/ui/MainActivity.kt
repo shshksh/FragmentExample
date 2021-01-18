@@ -3,9 +3,9 @@ package com.example.fragmentexample.ui
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
 import com.example.fragmentexample.R
 import com.example.fragmentexample.databinding.ActivityMainBinding
-import com.example.fragmentexample.ui.menu1.Menu1FirstFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,24 +16,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportFragmentManager.addOnBackStackChangedListener {
+        val menu1Host = NavHostFragment.create(R.navigation.nav_menu1)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container_main, menu1Host, "Menu1NavHost")
+            .setPrimaryNavigationFragment(menu1Host)
+            .commitNow()
+
+        val manager = menu1Host.childFragmentManager
+        manager.addOnBackStackChangedListener {
             Log.d(
                 "TestFragmentManager",
-                "TestBackStackCount: ${supportFragmentManager.backStackEntryCount}"
+                "TestBackStackCount: ${manager.backStackEntryCount}"
             )
-            for (i in 0 until supportFragmentManager.backStackEntryCount) {
+            for (i in 0 until manager.backStackEntryCount) {
                 Log.d(
                     "TestFragmentManager",
-                    "TestBackStackAt(${i}): ${supportFragmentManager.getBackStackEntryAt(i).name}"
+                    "TestBackStackAt(${i}): ${manager.getBackStackEntryAt(i).name}"
                 )
             }
         }
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container_main, Menu1FirstFragment(), "Menu1First")
-            .addToBackStack("FirstFragment")
-            .commit()
-
     }
-
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.fragmentexample.R
 import com.example.fragmentexample.databinding.FragmentMenu1ThirdBinding
 import com.example.fragmentexample.ui.BaseFragment
@@ -30,16 +31,6 @@ class Menu1ThirdFragment : BaseFragment(Menu1ThirdFragment::class.simpleName) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnMenu1Third.setOnClickListener {
-            parentFragmentManager.findFragmentByTag("Menu1Third")?.let {
-                parentFragmentManager.beginTransaction()
-                    .remove(it)
-                    .addToBackStack("remove")
-                    .commit()
-                lifecycleScope.launch {
-                    delay(3000)
-                    parentFragmentManager.popBackStack()
-                }
-            }
         }
     }
 

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/article"
+        android:id="@id/nav_menu1"
         android:icon="@drawable/ic_baseline_article_24"
         android:title="article" />
     <item
-        android:id="@+id/person"
+        android:id="@id/nav_menu2"
         android:icon="@drawable/ic_baseline_person_24"
         android:title="person" />
     <item
-        android:id="@+id/setting"
+        android:id="@id/nav_menu3"
         android:icon="@drawable/ic_baseline_settings_24"
         android:title="setting" />
 </menu>

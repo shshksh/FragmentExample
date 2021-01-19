@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.fragmentexample.R
 import com.example.fragmentexample.databinding.FragmentMenu1ThirdBinding
 import com.example.fragmentexample.ui.BaseFragment
+import com.example.fragmentexample.ui.MainActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
@@ -31,6 +32,13 @@ class Menu1ThirdFragment : BaseFragment(Menu1ThirdFragment::class.simpleName) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnMenu1Third.setOnClickListener {
+            Log.d("testDetach", "onViewCreated: detach ")
+            (activity as? MainActivity)?.detachNavHost()
+            lifecycleScope.launch {
+                delay(2000)
+                Log.d("testAttach", "onViewCreated: attach ")
+                (activity as? MainActivity)?.attachNavHost()
+            }
         }
     }
 

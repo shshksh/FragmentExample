@@ -36,4 +36,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun detachNavHost() {
+        val navHost = supportFragmentManager.findFragmentByTag("Menu1NavHost")
+        navHost?.let {
+            supportFragmentManager.beginTransaction()
+                .detach(it)
+                .commit()
+        }
+    }
+
+    fun attachNavHost() {
+        val navHost = supportFragmentManager.findFragmentByTag("Menu1NavHost")
+        navHost?.let {
+            supportFragmentManager.beginTransaction()
+                .attach(it)
+                .commit()
+        }
+    }
 }

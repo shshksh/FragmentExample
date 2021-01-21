@@ -3,6 +3,8 @@ package com.example.fragmentexample.util
 import android.util.Log
 import android.util.SparseArray
 import androidx.core.util.set
+import androidx.core.view.get
+import androidx.core.view.iterator
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
@@ -17,7 +19,14 @@ fun BottomNavigationView.setupWithNavController(
 ): MutableLiveData<NavHostFragment> {
 
     val navHostMap = SparseArray<NavHostFragment>()
-    val startNavGraphId = selectedItemId
+    val startNavGraphId = menu[0].itemId
+    val selectedNavGraphId: Int
+    for (item in menu) {
+        if (item.isChecked) {
+            selectedNavGraphId = item.itemId
+            break
+        }
+    }
     val currentNavHost = MutableLiveData<NavHostFragment>()
 
     initNavHosts(navGraphList, fm, containerId, navHostMap)
@@ -43,11 +52,12 @@ private fun initNavHosts(
         navHostMap: SparseArray<NavHostFragment>
 ) {
     navGraphList.forEachIndexed { index, graph ->
-        val navHost = NavHostFragment.create(graph)
-        fm.commitNow {
-            add(containerId, navHost)
+        val navHost = getNavHost(graph, fm, containerId, index)
+        fm.commit {
             detach(navHost)
         }
+        navHostMap[navHost.navController.graph.id] = navHost
+
         val manager = navHost.childFragmentManager
         manager.addOnBackStackChangedListener {
             Log.d("BackStackChanged", "Nav${index}BackStackCount: ${manager.backStackEntryCount}")
@@ -56,8 +66,21 @@ private fun initNavHosts(
                         "Nav${index}BackStackAt(${i}): ${manager.getBackStackEntryAt(i).name}")
             }
         }
-        navHostMap[navHost.navController.graph.id] = navHost
     }
+}
+
+private fun getNavHost(graph: Int,
+                       fm: FragmentManager,
+                       containerId: Int,
+                       index: Int): NavHostFragment {
+    val fragment = fm.findFragmentByTag("navHostFragment$index") as? NavHostFragment
+    fragment?.let { return it }
+
+    val navHost = NavHostFragment.create(graph)
+    fm.commitNow {
+        add(containerId, navHost, "navHostFragment$index")
+    }
+    return navHost
 }
 
 private fun BottomNavigationView.setupMainBackStackChangedListener(

@@ -4,7 +4,6 @@ import android.util.Log
 import android.util.SparseArray
 import androidx.core.util.set
 import androidx.core.view.get
-import androidx.core.view.iterator
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
@@ -20,13 +19,6 @@ fun BottomNavigationView.setupWithNavController(
 
     val navHostMap = SparseArray<NavHostFragment>()
     val startNavGraphId = menu[0].itemId
-    val selectedNavGraphId: Int
-    for (item in menu) {
-        if (item.isChecked) {
-            selectedNavGraphId = item.itemId
-            break
-        }
-    }
     val currentNavHost = MutableLiveData<NavHostFragment>()
 
     initNavHosts(navGraphList, fm, containerId, navHostMap)
@@ -36,11 +28,21 @@ fun BottomNavigationView.setupWithNavController(
         attach(navHostMap[startNavGraphId])
         setPrimaryNavigationFragment(navHostMap[startNavGraphId])
     }
-    currentNavHost.value = navHostMap[selectedItemId]
+    currentNavHost.value = navHostMap[startNavGraphId]
 
     setupMainBackStackChangedListener(fm, startNavGraphId, currentNavHost, navHostMap)
     setupSelectedListener(fm, startNavGraphId, navHostMap)
     setupReselectedListener(navHostMap)
+
+    if (selectedItemId != startNavGraphId) {
+        fm.commit {
+            detach(navHostMap[startNavGraphId])
+            attach(navHostMap[selectedItemId])
+            setPrimaryNavigationFragment(navHostMap[selectedItemId])
+            addToBackStack("MainBackStack")
+            setReorderingAllowed(true)
+        }
+    }
 
     return currentNavHost
 }
@@ -67,6 +69,7 @@ private fun initNavHosts(
             }
         }
     }
+    fm.popBackStack("MainBackStack", FragmentManager.POP_BACK_STACK_INCLUSIVE)
 }
 
 private fun getNavHost(graph: Int,
@@ -109,12 +112,10 @@ private fun BottomNavigationView.setupSelectedListener(
         navHostMap: SparseArray<NavHostFragment>
 ) {
     setOnNavigationItemSelectedListener {
-        fm.popBackStack(
-                "MainBackStack",
-                FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
+        fm.popBackStack("MainBackStack", FragmentManager.POP_BACK_STACK_INCLUSIVE)
         if (it.itemId != startNavGraphId) {
             fm.commit {
+                detach(navHostMap[startNavGraphId])
                 attach(navHostMap[it.itemId])
                 setPrimaryNavigationFragment(navHostMap[it.itemId])
                 addToBackStack("MainBackStack")

@@ -7,6 +7,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.fragmentexample.R
 import com.example.fragmentexample.databinding.ActivityMainBinding
 import com.example.fragmentexample.util.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,13 +18,27 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        savedInstanceState ?: setupBottomNavBar()
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        setupBottomNavBar()
+    }
+
+    val BottomNavigationView.last: Int
+    get() = 1
+    private fun setupBottomNavBar() {
+
         val bottomNavGraphList =
-                listOf(R.navigation.nav_menu1, R.navigation.nav_menu2, R.navigation.nav_menu3)
+            listOf(R.navigation.nav_menu1, R.navigation.nav_menu2, R.navigation.nav_menu3)
         val currentNavHost = binding.navMainBottom.setupWithNavController(
-                supportFragmentManager, bottomNavGraphList, R.id.container_main)
+            supportFragmentManager, bottomNavGraphList, R.id.container_main
+        )
 
         val topLevelDestSet =
-                setOf(R.id.menu1FirstFragment, R.id.menu2FirstFragment, R.id.menu3FirstFragment)
+            setOf(R.id.menu1FirstFragment, R.id.menu2FirstFragment, R.id.menu3FirstFragment)
         val appBarConfiguration = AppBarConfiguration(topLevelDestSet)
 
         currentNavHost.observe(this) {

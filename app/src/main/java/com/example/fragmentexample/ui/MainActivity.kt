@@ -7,7 +7,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.fragmentexample.R
 import com.example.fragmentexample.databinding.ActivityMainBinding
 import com.example.fragmentexample.util.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,8 +26,6 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavBar()
     }
 
-    val BottomNavigationView.last: Int
-    get() = 1
     private fun setupBottomNavBar() {
 
         val bottomNavGraphList =
